@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Help Desk</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link type="image/png" sizes="16x16" rel="icon" href="./favicon.ico">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+
+    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
+</head>
+
+<body>
+    <header>
+        <div class="header-bg">
+            <h2>Добро пожаловать на сайт Help Desk</h2>
+        </div>
+    </header>
+    <div class="container">
+        <div class="form-container">
+            <form name="request" autocomplete="off" >
+                <div class="field">
+                    <label for="post-last">Фамилия *</label><br>
+                    <input id="post-last" type="text" name="last_name" placeholder="Фамилия" autocomplete="family-name"
+                        required autofocus value="Ivanov">
+                </div>
+                <div class="field">
+                    <label for="post-first">Имя *</label><br>
+                    <input type="text" name="first_name" id="post-first" placeholder="Имя" autocomplete="name" required
+                        value="Ivan">
+                </div>
+                <div class="field">
+                    <label for="post-father">Отчество *</label><br>
+                    <input type="text" name="patronymic_name" id="post-father" placeholder="Отчество" autocomplete="given-name"
+                        required value="Ivanovich">
+                </div>
+                <div class="field">
+                    <label for="post-tel">Телефон *</label><br>
+                    <input type="tel" name="tel" id="post-tel" placeholder="+7" autocomplete="tel"
+                        pattern="\+7[0-9]{3}[0-9]{3}[0-9]{2}[0-9]{2}" required value="+71234567890">
+                </div>
+                <div class="field">
+                    <label for="post-request">Обращение *</label><br>
+                    <textarea class="textarea-field" name="request_text" id="post-request" cols="20" rows="3" re
+                        placeholder="Введите текст обращения" required autocomplete="off"></textarea>
+                </div>
+                <div class="button-field">
+                    <button class="button-sent" role="button" target="_self">Отправить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <footer>
+        <div class="footer-bg">
+            <span class="footer-copyright">Copyring by Evgeniy - 2022</span>
+        </div>
+    </footer>
+    <script src='fetch.js' type="text/javascript" id></script>
+</body>
+</html>
