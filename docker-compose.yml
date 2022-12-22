@@ -1,0 +1,129 @@
+version: '3.9'
+
+services:
+  frontend:
+    image: jenek46/frontend
+    container_name: frontend
+    hostname: frontend
+    environment:
+      RUN_APP: server.py
+    networks:
+      default:
+        ipv4_address: 172.16.0.2
+    ports:
+      - 80:80
+    build:
+      context: ./frontend
+    depends_on:
+    - backend
+    restart: unless-stopped
+
+  backend:
+    image: jenek46/backend
+    container_name: backend
+    hostname: backend
+    networks:
+      default:
+        ipv4_address: 172.16.0.3
+    ports:
+      - 8080:8080
+    build:
+      context: ./backend
+    depends_on:
+      - rabbitmq
+    restart: unless-stopped
+
+  rabbitmq:
+    image: rabbitmq:3.11.4-management
+    container_name: rabbitmq
+    hostname: rabbitmq
+    networks:
+      default:
+        ipv4_address: 172.16.0.4
+    # tty: true
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+      RABBITMQ_DEFAULT_VHOST: helpdesk
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq:rw
+    restart: unless-stopped
+
+  servicedb:
+    build:
+      context: ./servicedb
+    image: jenek46/servicedb
+    container_name: servicedb
+    hostname: servicedb
+    command: ["uvicorn", "app.main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
+    # command: ["gunicorn", "app.main:app", "--reload", "-w", "2", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000"]
+    networks:
+      default:
+        ipv4_address: 172.16.0.5
+    ports:
+      - 8000:8000
+    volumes:
+      - ./servicedb:/servicedb:rw
+      # - servicedb-data:/servicedb:rw
+    depends_on:
+      - rabbitmq
+      - db
+    restart: unless-stopped
+
+  db:
+    build:
+      context: ./db
+    image: jenek46/db
+    container_name: db
+    hostname: db
+    networks:
+      default:
+        ipv4_address: 172.16.0.6
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: helpdesk
+    volumes:
+      - db-data:/var/lib/postgresql/data:rw
+    restart: unless-stopped
+
+  # pgadmin:
+  #   build:
+  #     context: ./pgadmin4
+  #   image: jenek46/pgadmin4
+  #   container_name: pgadmin4
+  #   hostname: pgadmin
+  #   volumes:
+  #     - pgadmin4-data:/var/lib/pgadmin:rw
+  #   networks:
+  #     default:
+  #       ipv4_address: 172.16.0.7
+  #   ports:
+  #     - 5050:80
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: admin@localhost.com
+  #     PGADMIN_DEFAULT_PASSWORD: admin
+  #     PGADMIN_DISABLE_POSTFIX: true
+  #     GUNICORN_ACCESS_LOGFILE: /dev/null
+  #   depends_on:
+  #     - db
+  #   restart: unless-stopped
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.16.0.0/24
+          gateway: 172.16.0.1
+
+volumes:
+  rabbitmq-data:
+  # servicedb-data:
+  db-data:
+  pgadmin4-data:
