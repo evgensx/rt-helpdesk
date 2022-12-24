@@ -40,7 +40,6 @@ services:
     networks:
       default:
         ipv4_address: 172.16.0.4
-    # tty: true
     ports:
       - 5672:5672
       - 15672:15672
@@ -55,6 +54,7 @@ services:
   servicedb:
     build:
       context: ./servicedb
+    # working_dir: /servicedb/app
     image: jenek46/servicedb
     container_name: servicedb
     hostname: servicedb
@@ -65,6 +65,8 @@ services:
         ipv4_address: 172.16.0.5
     ports:
       - 8000:8000
+    environment:
+      - DATABASE_URL=postgresql://admin:admin@db:5432/helpdesk
     volumes:
       - ./servicedb:/servicedb:rw
       # - servicedb-data:/servicedb:rw
