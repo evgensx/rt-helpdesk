@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 import datetime
+from random import randint
 
 
 class TicketsOut(BaseModel):
@@ -14,11 +15,11 @@ class TicketsOut(BaseModel):
 
 class TicketIn(BaseModel):
     application_date: datetime.datetime = datetime.datetime.utcnow().astimezone()
-    last_name: str = "Ivanov"
-    first_name: str = "Ivan"
-    patronymic_name: str = "Ivanovich"
-    tel: int = 71234567890
-    request_text: str = "Help me pls"
+    last_name: str = "Фамилия"
+    first_name: str = "Имя"
+    patronymic_name: str = "Отчество"
+    tel: int = 712345667890
+    request_text: str = "Текст обращения"
 
-    # class Config:
-    #     orm_mode = True
+# class Pika(BaseModel):
+#     message: dict

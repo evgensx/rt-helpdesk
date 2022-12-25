@@ -66,7 +66,11 @@ services:
     ports:
       - 8000:8000
     environment:
-      - DATABASE_URL=postgresql://admin:admin@db:5432/helpdesk
+      DATABASE_URL: postgresql://admin:admin@db:5432/helpdesk
+      RABBIT_MQ_URL: amqp://admin:admin@rabbitmq:5672/helpdesk
+      RABBIT_MQ_QUEUE: tickets_queue
+      RABBIT_MQ_EXCHANGE: amq.direct
+      RABBIT_MQ_ROUTING_KEY: helpdesk_routing_key
     volumes:
       - ./servicedb:/servicedb:rw
       # - servicedb-data:/servicedb:rw
