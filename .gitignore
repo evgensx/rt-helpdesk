@@ -19,6 +19,7 @@
 **/Pipfile*
 /backend/test*
 /frontend/.eslint*
+/frontend/server.py
 /servicedb/_main.py
 **/__pycache__
 LICENSE
