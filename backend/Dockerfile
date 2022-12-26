@@ -7,4 +7,4 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt && rm requirements.txt
 COPY *.py .
 EXPOSE 8080
-CMD python3 -u $TORNADO_APP
+CMD python3 -u app:ma
