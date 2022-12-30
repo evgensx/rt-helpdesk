@@ -3,23 +3,28 @@ from tornado.web import RequestHandler, Application
 from pika_cli import sender
 from model import TicketIn, TicketOut
 from pydantic import ValidationError
+import json
 import logging
 
 logging.basicConfig(level=logging.INFO)
 
-async def to_rabbit(message):
-    await sender(message)
 
 async def validate(message: bytes) -> dict:
     try:
-        form_validation = TicketIn.parse_raw(message) # декодируем форму
+        message_decoded = message.decode()
+    except UnicodeDecodeError as e:
+        message_decoded = message.decode('cp1251')
+
+    try:
+        message_dict = json.JSONDecoder().decode(message_decoded)
+        form_validation = TicketIn.parse_obj(message_dict)
         logging.info("[+] Validated form! : %s", form_validation)
-        message_out = TicketOut.parse_raw(message).json().encode('utf-8')
+        message_out = TicketOut.parse_obj(message_dict).json().encode('utf-8')
         logging.info('Message out = %s', message_out)
-        await to_rabbit(message_out)
+        await sender(message_out) # send message to rabbitmq
         return {'success': True}
     except ValidationError as e:
-        # print(e)
+        logging.info("[-] Error is: %s", e)
         error_list = []
         for error in e.errors():
             if error['type'] == 'value_error.missing':
@@ -31,6 +36,7 @@ async def validate(message: bytes) -> dict:
         return result
     except ConnectionError:
         return {'success': False, 'connection': False, 'solution': 'please try later'}
+
 
 class SubmitHandler(RequestHandler):
     async def post(self):
@@ -49,7 +55,7 @@ class SubmitHandler(RequestHandler):
 async def main():
     app = Application([
         (r"/submit", SubmitHandler),
-    ], autoreload=True, debug=True)
+    ], debug=True)
     app.listen(8080)
     logging.info('Starting tornado...\n')
     await asyncio.Event().wait()

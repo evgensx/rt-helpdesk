@@ -1,12 +1,12 @@
 from os import getenv
-from aio_pika import connect_robust, Message
+from aio_pika import connect, Message
 import logging
 
 
 async def create_connection():
     # Connection setup
-    return await connect_robust(
-        getenv('RABBIT_MQ_URL', 'amqp://guest:guest@localhost:5672/'))
+    return await connect(
+        url=getenv('RABBIT_MQ_URL', 'amqp://guest:guest@localhost:5672/'))
 
 
 async def sender(message: bytes):
