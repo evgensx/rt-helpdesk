@@ -1,6 +1,5 @@
 from pydantic import BaseModel
 import datetime
-from random import randint
 
 
 class TicketsOut(BaseModel):
@@ -20,6 +19,3 @@ class TicketIn(BaseModel):
     patronymic_name: str = "Отчество"
     tel: int = 712345667890
     request_text: str = "Текст обращения"
-
-# class Pika(BaseModel):
-#     message: dict

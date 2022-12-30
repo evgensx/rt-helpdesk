@@ -5,8 +5,6 @@ services:
     image: jenek46/frontend
     container_name: frontend
     hostname: frontend
-    environment:
-      RUN_APP: server.py
     networks:
       default:
         ipv4_address: 172.16.0.2
@@ -29,6 +27,11 @@ services:
       - 8080:8080
     build:
       context: ./backend
+    environment:
+      RABBIT_MQ_URL: amqp://admin:admin@rabbitmq:5672/helpdesk
+      RABBIT_MQ_QUEUE: tickets_queue
+      RABBIT_MQ_EXCHANGE: helpdesk.direct
+      RABBIT_MQ_ROUTING_KEY: helpdesk_routing_key
     depends_on:
       - rabbitmq
     restart: unless-stopped
@@ -69,7 +72,7 @@ services:
       DATABASE_URL: postgresql://admin:admin@db:5432/helpdesk
       RABBIT_MQ_URL: amqp://admin:admin@rabbitmq:5672/helpdesk
       RABBIT_MQ_QUEUE: tickets_queue
-      RABBIT_MQ_EXCHANGE: amq.direct
+      RABBIT_MQ_EXCHANGE: helpdesk.direct
       RABBIT_MQ_ROUTING_KEY: helpdesk_routing_key
     volumes:
       - ./servicedb:/servicedb:rw
