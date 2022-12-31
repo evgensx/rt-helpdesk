@@ -26,3 +26,16 @@ class Ticket:
         _query = tickets_table.insert().values(ticket)
         _last_record_id = await db.execute(_query)
         return _last_record_id
+
+    @classmethod
+    async def get_same_items(cls, size: int):
+        if isinstance(size, int):
+            if size == 1:
+                _query = tickets_table.select().order_by(tickets_table.c.id.desc()).limit(1)
+            elif size > 1:
+                subq = tickets_table.select().order_by(tickets_table.c.id.desc()).limit(size).cte()
+                _query = (subq.select().order_by(subq.c.id))
+            else:
+                _query = tickets_table.select().order_by(tickets_table.c.id).limit(1)
+        _same_tickets = await db.fetch_all(_query)
+        return _same_tickets
