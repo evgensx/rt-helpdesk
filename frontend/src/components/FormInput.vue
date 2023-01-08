@@ -1,10 +1,17 @@
+<script setup lang="ts">
+import { ref } from "vue";
+const counter = ref(0);
+</script>
+
 <template>
   <div class="container">
-    <form name="request" autocomplete="off">
+    <form @submit.prevent="counter++" name="request" autocomplete="off">
       <div class="field">
-        <label for="post-last">Фамилия <span class="star-red">*</span></label
-        ><br />
+        <label class="field-label" for="post-last">
+          <span class="star-red">*</span> Фамилия
+        </label>
         <input
+          class="field-input"
           id="post-last"
           type="text"
           name="last_name"
@@ -16,9 +23,11 @@
         />
       </div>
       <div class="field">
-        <label for="post-first">Имя <span class="star-red">*</span></label
-        ><br />
+        <label class="field-label" for="post-first">
+          <span class="star-red">*</span> Имя
+        </label>
         <input
+          class="field-input"
           type="text"
           name="first_name"
           id="post-first"
@@ -29,9 +38,11 @@
         />
       </div>
       <div class="field">
-        <label for="post-father">Отчество <span class="star-red">*</span></label
-        ><br />
+        <label class="field-label" for="post-father">
+          <span class="star-red">*</span> Отчество
+        </label>
         <input
+          class="field-input"
           type="text"
           name="patronymic_name"
           id="post-father"
@@ -42,9 +53,11 @@
         />
       </div>
       <div class="field">
-        <label for="post-tel">Телефон <span class="star-red">*</span></label
-        ><br />
+        <label class="field-label" for="post-tel">
+          <span class="star-red">*</span> Телефон
+        </label>
         <input
+          class="field-input"
           type="tel"
           name="tel"
           id="post-tel"
@@ -56,59 +69,47 @@
         />
       </div>
       <div class="field">
-        <label for="post-request"
-          >Обращение <span class="star-red">*</span></label
-        ><br />
+        <label class="field-label" for="post-request">
+          <span class="star-red">*</span> Обращение
+        </label>
         <textarea
-          class="textarea-field"
+          class="field-input"
           name="request_text"
           id="post-request"
-          cols="20"
-          rows="5"
-          re
           placeholder="Введите текст обращения"
           required
           autocomplete="off"
+          v-model="counter"
         ></textarea>
       </div>
-      <div class="button-field">
-        <button class="button-sent" role="button" target="_self">
-          Отправить
-        </button>
+      <div class="field">
+        <div></div>
+        <div class="button-field">
+          <button class="button-sent" role="button" target="_self">
+            Отправить
+          </button>
+        </div>
       </div>
     </form>
   </div>
 </template>
-
-<style scoped>
-.container {
-  display: flex;
-}
-
-.star-red {
-  color: #ff0000;
-}
-
-div .button-field {
-  display: flex;
-  justify-content: center;
-}
-</style>
 
 <script lang="ts">
 export default {
   name: "post-request-async-await",
   data() {
     return {
-      postId: null
+      postId: null,
     };
   },
   async created() {
     // POST request using fetch with async/await
     const requestOptions = {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title: "Vue POST Request Example" })
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ title: "Vue POST Request Example" }),
     };
     const response = await fetch(
       "https://jsonplaceholder.typicode.com/posts",
@@ -119,6 +120,59 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.container {
+  display: flex;
+}
+
+input {
+  height: 30px;
+}
+
+.field {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  padding-top: 5px;
+}
+
+.field-label {
+  font-size: smaller;
+  margin-right: 5px;
+}
+
+.star-red {
+  color: #ff0000;
+}
+
+.field-input {
+  min-width: 60%;
+  width: 200px;
+}
+
+div .button-field {
+  min-width: 60%;
+  width: 200px;
+}
+
+textarea {
+  height: 60px;
+}
+
+@media (max-width: 362px) {
+  .field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  div .button-field {
+    display: flex;
+    justify-content: center;
+  }
+}
+</style>
 
 <!-- <script lang="ts">
 const API_URI = "http://" + document.location.hostname + ":8080/submit";

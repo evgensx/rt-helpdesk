@@ -5,7 +5,7 @@ import FormInput from "../components/FormInput.vue";
 <template>
   <div class="about">
     <div>
-      <h2>Заполните поля формы ниже</h2>
+      <h2 style="text-align: center">Заполните поля формы ниже</h2>
     </div>
     <div>
       <FormInput />
