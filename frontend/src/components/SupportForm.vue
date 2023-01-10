@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref } from "vue";
-const counter = ref(0);
+const tel = ref("");
 </script>
 
 <template>
   <div class="container">
-    <form @submit.prevent="counter++" name="request" autocomplete="off">
+    <form @submit.prevent="" name="request" autocomplete="off">
       <div class="field">
         <label class="field-label" for="post-last">
           <span class="star-red">*</span> Фамилия
@@ -57,15 +57,16 @@ const counter = ref(0);
           <span class="star-red">*</span> Телефон
         </label>
         <input
+          v-model="tel"
+          @focus.once="tel = '+7 (908) 123 17 89'"
           class="field-input"
           type="tel"
           name="tel"
           id="post-tel"
           placeholder="+7"
           autocomplete="tel"
-          pattern="\+7[0-9]{3}[0-9]{3}[0-9]{2}[0-9]{2}"
+          pattern="\+7 \([0-9]{3}\) [0-9]{3} [0-9]{2} [0-9]{2}"
           required
-          value="+71234567890"
         />
       </div>
       <div class="field">
@@ -78,12 +79,12 @@ const counter = ref(0);
           id="post-request"
           placeholder="Введите текст обращения"
           required
+          rows="3"
           autocomplete="off"
-          v-model="counter"
         ></textarea>
       </div>
       <div class="field">
-        <div></div>
+        <div />
         <div class="button-field">
           <button class="button-sent" role="button" target="_self">
             Отправить
@@ -158,7 +159,7 @@ div .button-field {
 }
 
 textarea {
-  height: 60px;
+  resize: vertical;
 }
 
 @media (max-width: 362px) {

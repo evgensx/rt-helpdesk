@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from "vue-router";
-import HeaderWelcome from "./components/HeaderWelcome.vue";
+import HeaderWelcome from "@/components/HeaderWelcome.vue";
 </script>
 
 <template>
@@ -10,7 +10,7 @@ import HeaderWelcome from "./components/HeaderWelcome.vue";
       <HeaderWelcome msg="Вам здесь помогут" />
       <nav>
         <RouterLink to="/">Поддержка</RouterLink>
-        <RouterLink to="/about">O сайте</RouterLink>
+        <RouterLink to="/about">O фреймворке</RouterLink>
       </nav>
     </div>
   </header>
