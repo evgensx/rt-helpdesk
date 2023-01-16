@@ -1,16 +1,77 @@
 <script setup lang="ts">
-import { ref } from "vue";
-const tel = ref("");
+import { ref, computed } from "vue";
+// import type { Ref } from "vue";
+
+const formData = ref({
+  lastName: "Иванов",
+  firstName: "Иван",
+  patronymicName: "Иванович",
+  tel: "+7 (123) 456 78 90", //+7 (123) 456 78 90
+  textarea: "помогите",
+});
+
+// inferred type: ComputedRef<number>
+const formattedPhoneNumber = computed(() => {
+  return formData.value.tel.replace(
+    /(\+\d{1})(\d{3})(\d{3})(\d{2})(\d{2})/g,
+    "$1 ($2) $3 $4 $5"
+  );
+});
+
+const formIsValid = computed(() => {
+  return (
+    formData.value.lastName.trim() !== "" &&
+    formData.value.firstName.trim() !== "" &&
+    formData.value.patronymicName.trim() !== "" &&
+    formData.value.tel.trim() !== "" &&
+    formData.value.textarea.trim() !== ""
+  );
+});
+
+//Replace value in form object
+let formatPhoneNumber = () => {
+  formData.value.tel = formattedPhoneNumber.value;
+};
+
+// Fetch request to backend server
+const submitForm = async () => {
+  try {
+    const res = await fetch(
+      "http://" + window.location.hostname + ":8888/submit",
+      {
+        method: "POST",
+        body: JSON.stringify(formData.value),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (res.ok) {
+      const json = await res.json();
+      // Do something with the response data
+      console.log(json);
+    } else {
+      // handle the error
+    }
+  } catch (error) {
+    // Handle the error
+    console.error(error);
+  }
+};
 </script>
 
 <template>
-  <div class="container">
-    <form @submit.prevent="" name="request" autocomplete="off">
+  <div>
+    <h2>Заполните поля формы ниже</h2>
+  </div>
+  <div id="container">
+    <form @submit.prevent="submitForm" name="request" autocomplete="off">
       <div class="field">
         <label class="field-label" for="post-last">
           <span class="star-red">*</span> Фамилия
         </label>
         <input
+          v-model="formData.lastName"
           class="field-input"
           id="post-last"
           type="text"
@@ -19,7 +80,6 @@ const tel = ref("");
           autocomplete="family-name"
           required
           autofocus
-          value="Ivanov"
         />
       </div>
       <div class="field">
@@ -27,6 +87,7 @@ const tel = ref("");
           <span class="star-red">*</span> Имя
         </label>
         <input
+          v-model="formData.firstName"
           class="field-input"
           type="text"
           name="first_name"
@@ -34,7 +95,6 @@ const tel = ref("");
           placeholder="Имя"
           autocomplete="name"
           required
-          value="Ivan"
         />
       </div>
       <div class="field">
@@ -42,6 +102,7 @@ const tel = ref("");
           <span class="star-red">*</span> Отчество
         </label>
         <input
+          v-model="formData.patronymicName"
           class="field-input"
           type="text"
           name="patronymic_name"
@@ -49,7 +110,6 @@ const tel = ref("");
           placeholder="Отчество"
           autocomplete="given-name"
           required
-          value="Ivanovich"
         />
       </div>
       <div class="field">
@@ -57,8 +117,9 @@ const tel = ref("");
           <span class="star-red">*</span> Телефон
         </label>
         <input
-          v-model="tel"
-          @focus.once="tel = '+7 (908) 123 17 89'"
+          v-model="formData.tel"
+          @focus.once="formData.tel = '+7'"
+          @input="formatPhoneNumber"
           class="field-input"
           type="tel"
           name="tel"
@@ -66,6 +127,7 @@ const tel = ref("");
           placeholder="+7"
           autocomplete="tel"
           pattern="\+7 \([0-9]{3}\) [0-9]{3} [0-9]{2} [0-9]{2}"
+          maxlength="18"
           required
         />
       </div>
@@ -74,6 +136,7 @@ const tel = ref("");
           <span class="star-red">*</span> Обращение
         </label>
         <textarea
+          v-model="formData.textarea"
           class="field-input"
           name="request_text"
           id="post-request"
@@ -84,49 +147,22 @@ const tel = ref("");
         ></textarea>
       </div>
       <div class="field">
-        <div />
-        <div class="button-field">
-          <button class="button-sent" role="button" target="_self">
-            Отправить
-          </button>
-        </div>
+        <button
+          :disabled="!formIsValid"
+          class="field__button"
+          type="submit"
+          target="_self"
+        >
+          Отправить
+        </button>
       </div>
     </form>
   </div>
 </template>
 
-<script lang="ts">
-export default {
-  name: "post-request-async-await",
-  data() {
-    return {
-      postId: null,
-    };
-  },
-  async created() {
-    // POST request using fetch with async/await
-    const requestOptions = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ title: "Vue POST Request Example" }),
-    };
-    const response = await fetch(
-      "https://jsonplaceholder.typicode.com/posts",
-      requestOptions
-    );
-    const data = await response.json();
-    this.postId = data.id;
-  },
-};
-</script>
+<script lang="ts"></script>
 
 <style scoped>
-.container {
-  display: flex;
-}
-
 input {
   height: 30px;
 }
@@ -140,7 +176,7 @@ input {
 }
 
 .field-label {
-  font-size: smaller;
+  font-size: 0.96em;
   margin-right: 5px;
 }
 
@@ -153,9 +189,9 @@ input {
   width: 200px;
 }
 
-div .button-field {
-  min-width: 60%;
-  width: 200px;
+.field__button {
+  /* align-self: flex-start; */
+  margin-right: 40%;
 }
 
 textarea {
@@ -168,9 +204,8 @@ textarea {
     flex-direction: column;
     align-items: center;
   }
-  div .button-field {
-    display: flex;
-    justify-content: center;
+  .field__button {
+    margin: auto;
   }
 }
 </style>

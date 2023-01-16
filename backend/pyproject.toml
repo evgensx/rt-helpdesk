@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "backend"
+version = "0.1.0"
+description = ""
+authors = ["Evgenii <jenek46@ya.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+tornado = "^6.2"
+aio-pika = "^8.3.0"
+pydantic = "^1.10.4"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
