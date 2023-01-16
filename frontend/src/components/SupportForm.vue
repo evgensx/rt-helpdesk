@@ -1,70 +1,24 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
-// import type { Ref } from "vue";
-
-const formData = ref({
-  lastName: "Иванов",
-  firstName: "Иван",
-  patronymicName: "Иванович",
-  tel: "+7 (123) 456 78 90", //+7 (123) 456 78 90
-  textarea: "помогите",
-});
-
-// inferred type: ComputedRef<number>
-const formattedPhoneNumber = computed(() => {
-  return formData.value.tel.replace(
-    /(\+\d{1})(\d{3})(\d{3})(\d{2})(\d{2})/g,
-    "$1 ($2) $3 $4 $5"
-  );
-});
-
-const formIsValid = computed(() => {
-  return (
-    formData.value.lastName.trim() !== "" &&
-    formData.value.firstName.trim() !== "" &&
-    formData.value.patronymicName.trim() !== "" &&
-    formData.value.tel.trim() !== "" &&
-    formData.value.textarea.trim() !== ""
-  );
-});
-
-//Replace value in form object
-let formatPhoneNumber = () => {
-  formData.value.tel = formattedPhoneNumber.value;
-};
-
-// Fetch request to backend server
-const submitForm = async () => {
-  try {
-    const res = await fetch(
-      "http://" + window.location.hostname + ":8888/submit",
-      {
-        method: "POST",
-        body: JSON.stringify(formData.value),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    if (res.ok) {
-      const json = await res.json();
-      // Do something with the response data
-      console.log(json);
-    } else {
-      // handle the error
-    }
-  } catch (error) {
-    // Handle the error
-    console.error(error);
-  }
-};
+import {
+  submitForm,
+  formData,
+  formatPhoneNumber,
+  formIsValid,
+  isTrue,
+} from "@/ts/formScripts";
 </script>
 
 <template>
-  <div>
-    <h2>Заполните поля формы ниже</h2>
+  <div v v-if="isTrue">
+    <h2>
+      Данные приняты<br />
+      Спасибо за обращение
+    </h2>
   </div>
-  <div id="container">
+  <div v-else>
+    <div>
+      <h2>Заполните поля формы ниже</h2>
+    </div>
     <form @submit.prevent="submitForm" name="request" autocomplete="off">
       <div class="field">
         <label class="field-label" for="post-last">
@@ -127,6 +81,7 @@ const submitForm = async () => {
           placeholder="+7"
           autocomplete="tel"
           pattern="\+7 \([0-9]{3}\) [0-9]{3} [0-9]{2} [0-9]{2}"
+          minlength="18"
           maxlength="18"
           required
         />
@@ -159,8 +114,6 @@ const submitForm = async () => {
     </form>
   </div>
 </template>
-
-<script lang="ts"></script>
 
 <style scoped>
 input {
@@ -209,44 +162,3 @@ textarea {
   }
 }
 </style>
-
-<!-- <script lang="ts">
-const API_URI = "http://" + document.location.hostname + ":8080/submit";
-console.log(API_URI);
-var submitButton = document.getElementsByClassName("button-sent")[0];
-var form = document.forms.request;
-
-async function asyncJson() {
-  let object = {};
-  let formData = new FormData(form);
-  formData.forEach((value, key) => (object[key] = value));
-
-  let response = await fetch(API_URI, {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json; charset=UTF-8",
-    },
-    body: JSON.stringify(object),
-  });
-  if (response.ok) {
-    var formContainer = document.getElementsByClassName("form-container")[0];
-    formContainer.setAttribute(
-      "style",
-      "justify-content: center; align-items: center"
-    );
-    formContainer.innerHTML = "<h2>Спасибо за обращение!</h2>";
-    return response.json();
-  } else {
-    alert("Ошибка HTTP: " + response.status);
-  }
-  return;
-}
-
-submitButton.addEventListener("click", (event) => {
-  if (form.checkValidity()) {
-    event.preventDefault();
-    asyncJson();
-  }
-});
-</script> -->

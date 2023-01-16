@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import SupportForm from "@/components/SupportForm.vue";
+import TheSupport from "@/components/TheSupport.vue";
 </script>
 
 <template>
   <div class="about">
     <div>
-      <SupportForm />
+      <TheSupport />
     </div>
   </div>
 </template>

@@ -52,7 +52,6 @@ class SubmitHandler(RequestHandler):
         self.set_header("Content-Type", "text/html; charset=UTF-8")
         self.set_status(200)
 
-
     async def post(self):
         data = json.loads(self.request.body) #.decode('cp1251')
         # print(data, type(data))

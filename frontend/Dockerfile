@@ -1,5 +1,5 @@
 # build stage
-FROM node:19.3.0-buster as build-stage
+FROM node:19.4.0-buster as build-stage
 
 WORKDIR /app
 
