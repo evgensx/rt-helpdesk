@@ -1,11 +1,24 @@
 <script setup lang="ts">
+import { ref, computed } from "vue";
 import {
   submitForm,
   formData,
   formatPhoneNumber,
   formIsValid,
   isTrue,
+  // formChecker,
 } from "@/ts/formScripts";
+
+const checker = ref(() => {
+  // if (formIsValid) {
+
+  // }
+  return true;
+});
+
+// let count = ref(0);
+
+const textLength = computed(() => formData.value.textarea.length);
 </script>
 
 <template>
@@ -26,6 +39,7 @@ import {
         </label>
         <input
           v-model="formData.lastName"
+          v-on:keyup="checker"
           class="field-input"
           id="post-last"
           type="text"
@@ -36,6 +50,7 @@ import {
           autofocus
         />
       </div>
+      <div v-if="d"></div>
       <div class="field">
         <label class="field-label" for="post-first">
           <span class="star-red">*</span> Имя
@@ -97,10 +112,14 @@ import {
           id="post-request"
           placeholder="Введите текст обращения"
           required
-          rows="3"
+          maxlength="280"
+          minlength="8"
+          v-bind:rows="3"
+          v-on:keyup="1"
           autocomplete="off"
         ></textarea>
       </div>
+      <div class="valid">{{ textLength }} / 280</div>
       <div class="field">
         <button
           v-bind:disabled="formIsValid"
@@ -144,11 +163,25 @@ input {
 
 .field__button {
   /* align-self: flex-start; */
-  margin-right: 40%;
+  /* top|right|down|left */
+  margin: 3px 40%;
+  padding: 4px 6px;
 }
 
 textarea {
   resize: vertical;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  padding: 4px;
+}
+.valid {
+  margin-right: 0px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  font-size: 0.8em;
 }
 
 @media (max-width: 362px) {
@@ -158,7 +191,7 @@ textarea {
     align-items: center;
   }
   .field__button {
-    margin: auto;
+    margin: 5px auto;
   }
 }
 </style>

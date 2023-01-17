@@ -5,7 +5,7 @@ const formData = ref({
   firstName: "Иван",
   patronymicName: "Иванович",
   tel: "+7 (123) 456 78 90",
-  textarea: "помогите",
+  textarea: "Помогите",
 });
 
 // inferred type: ComputedRef<number>
@@ -33,6 +33,11 @@ const formIsValid = computed(() => {
 const formatPhoneNumber = () => {
   formData.value.tel = formattedPhoneNumber.value;
 };
+
+// function formChecker() {
+//   if (formIsValid.value) {
+//   }
+// }
 
 // Define var
 let isTrue: boolean = false;
@@ -71,4 +76,11 @@ const submitForm = async () => {
   }
 };
 
-export { formData, submitForm, formIsValid, formatPhoneNumber, isTrue };
+export {
+  formData,
+  submitForm,
+  formIsValid,
+  formatPhoneNumber,
+  isTrue,
+  // formChecker,
+};
