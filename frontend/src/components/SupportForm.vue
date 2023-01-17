@@ -9,7 +9,7 @@ import {
 </script>
 
 <template>
-  <div v v-if="isTrue">
+  <div v-if="isTrue">
     <h2>
       Данные приняты<br />
       Спасибо за обращение
@@ -47,7 +47,7 @@ import {
           name="first_name"
           id="post-first"
           placeholder="Имя"
-          autocomplete="name"
+          autocomplete="given-name"
           required
         />
       </div>
@@ -62,7 +62,7 @@ import {
           name="patronymic_name"
           id="post-father"
           placeholder="Отчество"
-          autocomplete="given-name"
+          autocomplete="additional-name"
           required
         />
       </div>
@@ -103,7 +103,7 @@ import {
       </div>
       <div class="field">
         <button
-          :disabled="!formIsValid"
+          v-bind:disabled="formIsValid"
           class="field__button"
           type="submit"
           target="_self"

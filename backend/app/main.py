@@ -1,4 +1,5 @@
 import asyncio
+from re import sub
 from tornado.web import RequestHandler, Application
 from pika_cli import sender
 from model import TicketIn, TicketOut
@@ -17,7 +18,8 @@ async def validate(message: bytes) -> dict:
         message_decoded = message.decode('cp1251')
 
     try:
-        message_dict = json.JSONDecoder().decode(message_decoded)
+        message_dict: dict = json.loads(message_decoded)
+        message_dict["tel"] = int(sub(r"\D", "", message_dict["tel"]))
         form_validation = TicketIn.parse_obj(message_dict)
         logging.info("[+] Validated form! : %s", form_validation)
         message_out = TicketOut.parse_obj(message_dict).json().encode('utf-8')
@@ -33,12 +35,14 @@ async def validate(message: bytes) -> dict:
                 error = error['loc'][0]
                 error_list.append(error)
         logging.info("[-] Error list is: %s", error_list)
-        result: dict[str, list | bool] = {'success': False}
-        result['missing required fields'] = error_list
+        result = {}
+        result["success"] = False
+        result["type_error"] = "content"
+        result["missing required fields"] = error_list
         return result
 
     except ConnectionError:
-        return {'success': False, 'connection': False, 'solution': 'please try later'}
+        return {"success": False, "type_error": "service unavailable"}
 
 
 class SubmitHandler(RequestHandler):
@@ -53,7 +57,11 @@ class SubmitHandler(RequestHandler):
         self.set_status(200)
 
     async def post(self):
+        """
+        curl -i -X POST --data '{"last_name":"Familiya","first_name":"Imya","patronymic_name":"Otchestvo","tel": "+7 (123) 456 78 90","request_text":"help me"}' http://localhost:8888/submit
+        """
         data = json.loads(self.request.body) #.decode('cp1251')
+        data["tel"] = int(sub(r"\D", "", data["tel"]))
         # print(data, type(data))
         json_data = json.dumps(data, ensure_ascii=False, separators=(',', ':'))
         # Encode json_data to utf-8
@@ -68,12 +76,15 @@ class SubmitHandler(RequestHandler):
     #     self.set_header('Access-Control-Allow-Headers', 'Accept, Content-Type')
     #     self.set_header('Access-Control-Allow-Origin', '*')
     #     if result['success'] == False:
-    #         self.set_status(400)
-    #         json_data = json.dumps(result, separators=(',', ':'))
-    #         self.write(json_data)
-    #     else:
-    #         json_data = json.dumps(result, separators=(',', ':'))
-    #         self.write(json_data)
+    #         if result['type_error'] == "content":
+    #             self.set_status(400)
+    #         else:
+    #             self.set_status(503)
+    #     json_data = json.dumps(result, separators=(',', ':'))
+    #     self.write(json_data)
+
+
+
 
 
 def make_app():
@@ -94,3 +105,4 @@ if __name__ == "__main__":
         asyncio.run(main())
     except KeyboardInterrupt:
         logging.info('Stopping tornado...\n')
+        exit()
