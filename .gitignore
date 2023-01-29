@@ -24,3 +24,5 @@
 **/__pycache__
 LICENSE
 technical_task.txt
+.hintrc
+compose-dev.yaml
