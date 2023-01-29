@@ -56,32 +56,32 @@ class SubmitHandler(RequestHandler):
         self.set_header("Content-Type", "text/html; charset=UTF-8")
         self.set_status(200)
 
-    async def post(self):
-        """
-        curl -i -X POST --data '{"last_name":"Familiya","first_name":"Imya","patronymic_name":"Otchestvo","tel": "+7 (123) 456 78 90","request_text":"help me"}' http://localhost:8888/submit
-        """
-        data = json.loads(self.request.body) #.decode('cp1251')
-        data["tel"] = int(sub(r"\D", "", data["tel"]))
-        # print(data, type(data))
-        json_data = json.dumps(data, ensure_ascii=False, separators=(',', ':'))
-        # Encode json_data to utf-8
-        json_data_utf8 = json_data.encode('utf-8')
-        print(json_data_utf8)
-        self.set_header('Access-Control-Allow-Origin', '*')
-        self.write(json_data_utf8)
-
     # async def post(self):
-    #     result = await validate(self.request.body)
-    #     self.set_header('Content-Type', 'application/json; charset=UTF-8')
-    #     self.set_header('Access-Control-Allow-Headers', 'Accept, Content-Type')
+    #     """
+    #     curl -i -X POST --data '{"last_name":"Familiya","first_name":"Imya","patronymic_name":"Otchestvo","tel": "+7 (123) 456 78 90","request_text":"help me"}' http://localhost:8888/submit
+    #     """
+    #     data = json.loads(self.request.body) #.decode('cp1251')
+    #     data["tel"] = int(sub(r"\D", "", data["tel"]))
+    #     # print(data, type(data))
+    #     json_data = json.dumps(data, ensure_ascii=False, separators=(',', ':'))
+    #     # Encode json_data to utf-8
+    #     json_data_utf8 = json_data.encode('utf-8')
+    #     print(json_data_utf8)
     #     self.set_header('Access-Control-Allow-Origin', '*')
-    #     if result['success'] == False:
-    #         if result['type_error'] == "content":
-    #             self.set_status(400)
-    #         else:
-    #             self.set_status(503)
-    #     json_data = json.dumps(result, separators=(',', ':'))
-    #     self.write(json_data)
+    #     self.write(json_data_utf8)
+
+    async def post(self):
+        result = await validate(self.request.body)
+        self.set_header('Content-Type', 'application/json; charset=UTF-8')
+        self.set_header('Access-Control-Allow-Headers', 'Accept, Content-Type')
+        self.set_header('Access-Control-Allow-Origin', '*')
+        if result['success'] == False:
+            if result['type_error'] == "content":
+                self.set_status(400)
+            else:
+                self.set_status(503)
+        json_data = json.dumps(result, separators=(',', ':'))
+        self.write(json_data)
 
 
 

@@ -1,11 +1,11 @@
-import { ref, computed } from "vue";
+import { ref, computed, reactive } from "vue";
 
-const formData = ref({
-  lastName: "Иванов",
-  firstName: "Иван",
-  patronymicName: "Иванович",
-  tel: "+7 (123) 456 78 90",
-  textarea: "Помогите",
+export const formData = ref({
+  lastName: "",
+  firstName: "",
+  patronymicName: "",
+  tel: "",
+  textarea: "",
 });
 
 // inferred type: ComputedRef<number>
@@ -16,8 +16,8 @@ const formattedPhoneNumber = computed(() => {
   );
 });
 
-const formIsValid = computed(() => {
-  return !(
+export const formIsValid = computed(() => {
+  return (
     formData.value.lastName.trim() !== "" &&
     formData.value.firstName.trim() !== "" &&
     formData.value.patronymicName.trim() !== "" &&
@@ -30,7 +30,7 @@ const formIsValid = computed(() => {
 });
 
 //Replace value in form object
-const formatPhoneNumber = () => {
+export const formatPhoneNumber = () => {
   formData.value.tel = formattedPhoneNumber.value;
 };
 
@@ -40,10 +40,10 @@ const formatPhoneNumber = () => {
 // }
 
 // Define var
-let isTrue: boolean = false;
+export const isTrue = ref(false);
 
 // Fetch request to backend server
-const submitForm = async () => {
+export const submitForm = async () => {
   try {
     const data = {
       last_name: formData.value.lastName,
@@ -63,7 +63,7 @@ const submitForm = async () => {
       }
     );
     if (res.ok) {
-      isTrue = true;
+      isTrue.value = true;
       const json = await res.json();
       // Do something with the response data
       console.log(json);
@@ -74,13 +74,4 @@ const submitForm = async () => {
     // Handle the error
     console.error(error);
   }
-};
-
-export {
-  formData,
-  submitForm,
-  formIsValid,
-  formatPhoneNumber,
-  isTrue,
-  // formChecker,
 };

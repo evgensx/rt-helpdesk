@@ -75,8 +75,8 @@ services:
       RABBIT_MQ_EXCHANGE: helpdesk.direct
       RABBIT_MQ_ROUTING_KEY: helpdesk_routing_key
     volumes:
-      - ./servicedb:/servicedb:rw
-      # - servicedb-data:/servicedb:rw
+      # - ./servicedb:/servicedb:rw
+      - servicedb-data:/servicedb:rw
     depends_on:
       - rabbitmq
       - db
@@ -101,27 +101,29 @@ services:
       - db-data:/var/lib/postgresql/data:rw
     restart: unless-stopped
 
-  # pgadmin:
-  #   build:
-  #     context: ./pgadmin4
-  #   image: jenek46/pgadmin4
-  #   container_name: pgadmin4
-  #   hostname: pgadmin
-  #   volumes:
-  #     - pgadmin4-data:/var/lib/pgadmin:rw
-  #   networks:
-  #     default:
-  #       ipv4_address: 172.16.0.7
-  #   ports:
-  #     - 5050:80
-  #   environment:
-  #     PGADMIN_DEFAULT_EMAIL: admin@localhost.com
-  #     PGADMIN_DEFAULT_PASSWORD: admin
-  #     PGADMIN_DISABLE_POSTFIX: true
-  #     GUNICORN_ACCESS_LOGFILE: /dev/null
-  #   depends_on:
-  #     - db
-  #   restart: unless-stopped
+
+  pgadmin:
+    build:
+      context: ./pgadmin4
+    image: jenek46/pgadmin4
+    container_name: pgadmin4
+    hostname: pgadmin
+    volumes:
+      - pgadmin4-data:/var/lib/pgadmin:rw
+    networks:
+      default:
+        ipv4_address: 172.16.0.7
+    ports:
+      - 5050:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@localhost.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_DISABLE_POSTFIX: true
+      GUNICORN_ACCESS_LOGFILE: /dev/null
+    depends_on:
+      - db
+    restart: unless-stopped
+
 
 networks:
   default:
@@ -133,6 +135,6 @@ networks:
 
 volumes:
   rabbitmq-data:
-  # servicedb-data:
+  servicedb-data:
   db-data:
   pgadmin4-data:
